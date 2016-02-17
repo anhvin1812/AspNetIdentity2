@@ -21,7 +21,7 @@ namespace AspNetIdentity2.Infrastructure
             IOwinContext context)
         {
             var appDbContext = context.Get<ApplicationDbContext>();
-            var appUserManager = new ApplicationUserManager(new UserStore<ApplicationUser>(appDbContext))
+            var appUserManager = new ApplicationUserManager(new UserStore<ApplicationUser>(appDbContext));
 
             return appUserManager;
         }
