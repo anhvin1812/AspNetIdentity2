@@ -33,7 +33,7 @@ namespace AspNetIdentity2.Migrations
                 JoinDate = DateTime.Now.AddYears(-3)
             };
 
-            manager.Create(user, "admin");
+            manager.Create(user, "Admin@123");
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data. E.g.

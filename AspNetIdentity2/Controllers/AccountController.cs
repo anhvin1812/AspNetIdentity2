@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using AspNetIdentity2.Infrastructure;
+using AspNetIdentity2.Models;
+using Microsoft.AspNet.Identity;
 
 namespace AspNetIdentity2.Controllers
 {
@@ -43,6 +46,57 @@ namespace AspNetIdentity2.Controllers
 
             return NotFound();
 
+        }
+
+        [Route("create")]
+        public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = new ApplicationUser()
+            {
+                UserName = createUserModel.Username,
+                Email = createUserModel.Email,
+                FirstName = createUserModel.FirstName,
+                LastName = createUserModel.LastName,
+                Level = 3,
+                JoinDate = DateTime.Now.Date,
+            };
+
+            IdentityResult addUserResult = await this.AppUserManager.CreateAsync(user, createUserModel.Password);
+
+            if (!addUserResult.Succeeded)
+            {
+                return GetErrorResult(addUserResult);
+            }
+
+            string code = await this.AppUserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+
+            var callbackUrl = new Uri(Url.Link("ConfirmEmailRoute", new { userId = user.Id, code = code }));
+
+            await this.AppUserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            var locationHeader = new Uri(Url.Link("GetUserById", new { id = user.Id }));
+
+            return Created(locationHeader, TheModelFactory.Create(user));
+        }
+
+        [HttpGet]
+        [Route("ConfirmEmail", Name = "ConfirmEmailRoute")]
+        public async Task<IHttpActionResult> ConfirmEmail(string userId = "", string code = "")
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
+            {
+                ModelState.AddModelError("", "User Id and Code are required");
+                return BadRequest(ModelState);
+            }
+
+            IdentityResult result = await this.AppUserManager.ConfirmEmailAsync(userId, code);
+
+            return result.Succeeded ? Ok() : GetErrorResult(result);
         }
     }
 }
