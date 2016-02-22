@@ -42,6 +42,7 @@ namespace AspNetIdentity2.Infrastructure
                 RequireUppercase = true,
             };
             
+            // Configure send email
             appUserManager.EmailService = new EmailService();
             
             var dataProtectionProvider = options.DataProtectionProvider;
