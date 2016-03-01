@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity;
 
 namespace AspNetIdentity2.Controllers
 {
+    [Authorize]
     [RoutePrefix("api/accounts")]
     public class AccountsController : BaseApiController
     {
@@ -47,7 +48,8 @@ namespace AspNetIdentity2.Controllers
             return NotFound();
 
         }
-
+        
+        [AllowAnonymous]
         [Route("create")]
         public async Task<IHttpActionResult> CreateUser(CreateUserBindingModel createUserModel)
         {
@@ -84,6 +86,7 @@ namespace AspNetIdentity2.Controllers
             return Created(locationHeader, TheModelFactory.Create(user));
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("ConfirmEmail", Name = "ConfirmEmailRoute")]
         public async Task<IHttpActionResult> ConfirmEmail(string userId = "", string code = "")
