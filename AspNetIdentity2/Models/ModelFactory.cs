@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http.Routing;
 using AspNetIdentity2.Infrastructure;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AspNetIdentity2.Models
 {
@@ -35,6 +36,17 @@ namespace AspNetIdentity2.Models
                 Claims = _AppUserManager.GetClaimsAsync(appUser.Id).Result
             };
         }
+
+        public RoleReturnModel Create(IdentityRole appRole)
+        {
+
+            return new RoleReturnModel
+            {
+                Url = _UrlHelper.Link("GetRoleById", new { id = appRole.Id }),
+                Id = appRole.Id,
+                Name = appRole.Name
+            };
+        }
     }
 
     public class UserReturnModel
@@ -49,5 +61,13 @@ namespace AspNetIdentity2.Models
         public DateTime JoinDate { get; set; }
         public IList<string> Roles { get; set; }
         public IList<System.Security.Claims.Claim> Claims { get; set; }
+    }
+
+
+    public class RoleReturnModel
+    {
+        public string Url { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

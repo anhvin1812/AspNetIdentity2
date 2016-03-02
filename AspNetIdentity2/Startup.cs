@@ -52,7 +52,9 @@ namespace AspNetIdentity2
 
             // OAuth 2.0 Bearer Access Token Generation
             app.UseOAuthAuthorizationServer(OAuthServerOptions);
-
+            
+            // Assign the role manager class to owin context
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
         }
 
         private void ConfigureWebApi(HttpConfiguration config)
